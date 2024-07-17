@@ -1,28 +1,17 @@
 # taskle README
 
-This is the README for your extension "taskle". After writing up a brief description, we recommend including the following sections.
+Taskle helps you plan out your code. Use the Breakdown feature to have AI break down your complex ideas.
+
 
 ## Features
 
-....
-
-## Requirements
-
-....
-
-## Extension Settings
-
-....
-
-For example:
-
-This extension contributes the following settings:
-
-....
+...
 
 ## Known Issues
 
 Working on UI and adding more features slowly...
+Going to add feature to implement your own tasks, rather than just AI...
+More features to come soon...
 
 ## Release Notes
 
