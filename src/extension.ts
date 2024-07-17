@@ -45,7 +45,6 @@ export async function activate(context: vscode.ExtensionContext) {
 	let apiKey = vscode.workspace.getConfiguration('taskle').get<string>('APIKey');
 	if (!apiKey || !(await validateAPIKey(apiKey))) {
 		apiKey = await grabAPIKey();
-		console.log(apiKey);
 	};
 
 	if (apiKey) {
