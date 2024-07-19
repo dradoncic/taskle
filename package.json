@@ -26,7 +26,7 @@
         {
           "type": "webview",
           "id": "taskle-sidebar",
-          "name": "Taskle",
+          "name": " Breakdown Tasks",
           "icon": "media/icon.svg",
           "contextualTitle": "Breakdown Tasks"
         }
@@ -45,6 +45,11 @@
           "type": "string",
           "default": "",
           "description": "API Key for OpenAI"
+        },
+        "taskle.tasks": {
+          "type": "array",
+          "default": [],
+          "description": "Stores user's tasks."
         }
       }
     }
@@ -63,6 +68,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
+    "@types/uuid": "^10.0.0",
     "@types/vscode": "^1.91.0",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
     "@typescript-eslint/parser": "^7.11.0",
@@ -75,6 +81,7 @@
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "openai": "^4.52.7"
+    "openai": "^4.52.7",
+    "uuid": "^10.0.0"
   }
 }
