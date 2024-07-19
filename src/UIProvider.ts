@@ -2,6 +2,18 @@ import * as vscode from "vscode";
 import OpenAI from 'openai';
 import { v4 as uuidv4 } from 'uuid';
 
+/**
+ * Fetaure to Fix:
+ * Fix the Saved Tasks (if clicked out tasks do not show up until you add another one)
+ * Slow Down the Delete Task (first let user see check mark and strike through task then remove, implement some sort of time)
+ * 
+ * Features to Implement:
+ * Drag and Drop to Reorder Tasks (add to the left of the delete button)
+ * Add a Dropdown Menu (to the right of each task)
+ *      Option to Edit the Task
+ *      Option to Break Down that Task Further
+ */
+
 export class UIProvider implements vscode.WebviewViewProvider {
     private _view?: vscode.WebviewView;
 
@@ -21,11 +33,12 @@ export class UIProvider implements vscode.WebviewViewProvider {
 
         webviewView.webview.html = this._getHtmlForWebview(webviewView.webview);
 
-        const tasks = this._loadTasks();
-        webviewView.webview.postMessage({ command: 'displayTasks', tasks });
-
         webviewView.webview.onDidReceiveMessage(async (message) => {
             switch (message.command) {
+                case 'webviewReady':
+                    const tasks = this._loadTasks();
+                    webviewView.webview.postMessage({ command: 'displayTasks', tasks});
+                    break;
                 case 'processTask':
                     await this._processTask(message.task, message.depth);
                     break;
@@ -199,6 +212,11 @@ export class UIProvider implements vscode.WebviewViewProvider {
                             break;
                     }
                 });
+
+                window.addEventListener('load', () => {
+                    vscode.postMessage({ command: 'webviewReady'});
+                });
+
             </script>
         </body>
         </html>`;
