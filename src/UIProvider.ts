@@ -186,6 +186,7 @@ export class UIProvider implements vscode.WebviewViewProvider {
                 const taskList = document.getElementById('task-list');
 
                 let useMagic = false;
+                magicWandButton.classList.add('deactivated')
 
                 // Update depth value display
                 depthScale.addEventListener('input', () => {
@@ -193,10 +194,15 @@ export class UIProvider implements vscode.WebviewViewProvider {
                 });
 
 
-                // Toggle magic wand
                 magicWandButton.addEventListener('click', () => {
                     useMagic = !useMagic;
-                    magicWandButton.classList.toggle('active', useMagic);
+                    if (useMagic) {
+                        magicWandButton.classList.remove('deactivated');
+                        magicWandButton.classList.add('active');
+                    } else {
+                        magicWandButton.classList.remove('active');
+                        magicWandButton.classList.add('deactivated');
+                    }
                 });
 
                 taskForm.addEventListener('submit', (e) => {
