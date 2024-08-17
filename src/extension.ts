@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import OpenAI from 'openai';
 import { UIProvider } from './UIProvider';
 
-async function grabAPIKey(): Promise<string | undefined> {
+async function grabAPIKey(context: vscode.ExtensionContext): Promise<string | undefined> {
     const apiKey = await vscode.window.showInputBox({
         ignoreFocusOut: true,
         placeHolder: 'OpenAI API Key',
@@ -24,7 +24,7 @@ async function grabAPIKey(): Promise<string | undefined> {
 
     if (apiKey) {
         vscode.window.showInformationMessage('Valid OpenAI API Key');
-        await vscode.workspace.getConfiguration('taskle').update('APIKey', apiKey, true);
+        await context.secrets.store('taskle-APIKey', apiKey);
     }
 
     return apiKey;
@@ -41,9 +41,9 @@ async function validateAPIKey(apiKey: string): Promise<boolean> {
 }
 
 export async function activate(context: vscode.ExtensionContext) {
-    let apiKey = vscode.workspace.getConfiguration('taskle').get<string>('APIKey');
+    let apiKey = await context.secrets.get('taskle-APIKey');
     if (!apiKey || !(await validateAPIKey(apiKey))) {
-        apiKey = await grabAPIKey();
+        apiKey = await grabAPIKey(context);
     }
 
     if (apiKey) {
@@ -51,7 +51,7 @@ export async function activate(context: vscode.ExtensionContext) {
         console.log('OpenAI API Key validated and set');
     }
 
-    const provider = new UIProvider(context.extensionUri);
+    const provider = new UIProvider(context.extensionUri, context);
     context.subscriptions.push(vscode.window.registerWebviewViewProvider('taskle-sidebar', provider));
     console.log('UIProvider registered');
 }

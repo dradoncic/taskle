@@ -1,23 +1,16 @@
 import * as vscode from "vscode";
 import OpenAI from 'openai';
 import { v4 as uuidv4 } from 'uuid';
-
-/**
- * Fetaure to Fix:
- * Fix the Saved Tasks (if clicked out tasks do not show up until you add another one)
- * Slow Down the Delete Task (first let user see check mark and strike through task then remove, implement some sort of time)
- * 
- * Features to Implement:
- * Drag and Drop to Reorder Tasks (add to the left of the delete button)
- * Add a Dropdown Menu (to the right of each task)
- *      Option to Edit the Task
- *      Option to Break Down that Task Further
- */
+import { setTimeout } from "timers/promises";
+import sortable from 'sortablejs';
 
 export class UIProvider implements vscode.WebviewViewProvider {
     private _view?: vscode.WebviewView;
+    private _context: vscode.ExtensionContext;
 
-    constructor(private readonly _extensionUri: vscode.Uri) {}
+    constructor(private readonly _extensionUri: vscode.Uri, context: vscode.ExtensionContext) {
+        this._context = context;
+    }
 
     public resolveWebviewView(
         webviewView: vscode.WebviewView,
@@ -51,12 +44,14 @@ export class UIProvider implements vscode.WebviewViewProvider {
                 case 'deleteTask':
                     this._deleteTask(message.taskId);
                     break;
+                case 'reorderTasks':
+                    this._reorderTasks(message.taskOrder);
             }
         });
     }
 
     private async _processTask(task: string, depth: number) {
-        const APIKey = vscode.workspace.getConfiguration('taskle').get<string>('APIKey');
+        const APIKey = await this._context.secrets.get('taskle-APIKey');
 
         if (APIKey) {
             const openai = new OpenAI({
@@ -106,8 +101,8 @@ export class UIProvider implements vscode.WebviewViewProvider {
     }
 
     private _addTask(task: string) {
-        const tasks = this._loadTasks();
-        tasks.push({ id: uuidv4(), text: task });
+        const tasks = this._loadTasks(); 
+        tasks.push({ id: uuidv4(), text: '- ' + task });
         this._saveTasks(tasks);
         this._view?.webview.postMessage({ command: 'displayTasks', tasks });
     }
@@ -124,10 +119,24 @@ export class UIProvider implements vscode.WebviewViewProvider {
         this._view?.webview.postMessage({ command: 'displayTasks', tasks });
     }
 
+    /* was going to implement a drag and drop reordering feature but for some reason I cannot get it to work*/
+    private _reorderTasks(taskOrder: string[]) {
+        console.log('Before reordering:', this._loadTasks());
+        let tasks = this._loadTasks();
+        tasks.sort((a, b) => taskOrder.indexOf(a.id) - taskOrder.indexOf(b.id));
+        this._saveTasks(tasks);
+        console.log('After reordering:', tasks);
+        this._view?.webview.postMessage({command: 'displayTasks', tasks });
+    }
+
     private _getHtmlForWebview(webview: vscode.Webview): string {
         const styleResetUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'reset.css'));
         const styleVSCodeUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'vscode.css'));
         const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.css'));
+
+    const magicButtonUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'magic.svg'));
+    const submitButtonUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'enter.svg'));
+    const clearButtonUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'trash.svg'));
 
         return `
         <!DOCTYPE html>
@@ -135,22 +144,36 @@ export class UIProvider implements vscode.WebviewViewProvider {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <link href="${styleResetUri}" rel="stylesheet">
+             <link href="${styleResetUri}" rel="stylesheet">
             <link href="${styleVSCodeUri}" rel="stylesheet">
             <link href="${styleMainUri}" rel="stylesheet">
             <title>Taskle</title>
         </head>
         <body>
             <form id="task-form">
-                <input type="text" id="task-input" placeholder="Enter a task" />
-                <label for="depth-scale">Depth Scale (1-5):</label>
-                <button id="magic-wand-button" type="button">✨</button>
-                <button id="submit-button" type="submit">✈️</button>
-                <input type="range" id="depth-scale" name="depth-scale" min="1" max="5" value="3">
-                <span id="depth-value">3</span>
+                <div class="top-row">
+                    <style>
+                        .accent {
+                            accent-color: var(--vscode-button-hoverBackground);
+                        }
+                    </style>
+                    <input type="range" class="accent" id="depth-scale" name="depth-scale" min="1" max="5" value="3">
+                    <span id="depth-value">3</span>
+                    <button id="magic-wand-button" type="button">
+                        <img src="${magicButtonUri}" alt="Magic Wand">
+                    </button>
+                </div>
+                <div class="bottom-row">
+                    <input type="text" id="task-input" placeholder="Enter a task" />
+                    <button id="submit-button" type="submit">
+                        <img src="${submitButtonUri}" alt="Submit">
+                    </button>
+                </div>
             </form>
             <ul id="task-list"></ul>
-            <button id="clear-tasks-button">Clear All Tasks</button>
+            <button id="clear-tasks-button">
+                <img src="${clearButtonUri}" alt="Clear All Tasks">
+            </button>
             <script>
                 const vscode = acquireVsCodeApi();
 
@@ -160,6 +183,7 @@ export class UIProvider implements vscode.WebviewViewProvider {
                 const taskForm = document.getElementById('task-form');
                 const taskInput = document.getElementById('task-input');
                 const clearTasksButton = document.getElementById('clear-tasks-button');
+                const taskList = document.getElementById('task-list');
 
                 let useMagic = false;
 
@@ -167,6 +191,7 @@ export class UIProvider implements vscode.WebviewViewProvider {
                 depthScale.addEventListener('input', () => {
                     depthValue.textContent = depthScale.value;
                 });
+
 
                 // Toggle magic wand
                 magicWandButton.addEventListener('click', () => {
@@ -196,17 +221,28 @@ export class UIProvider implements vscode.WebviewViewProvider {
                     const message = event.data;
                     switch (message.command) {
                         case 'displayTasks':
-                            const taskList = document.getElementById('task-list');
                             taskList.innerHTML = '';
                             message.tasks.forEach(task => {
                                 const li = document.createElement('li');
+                                li.classList.add('task-item');
+                                li.dataset.id = task.id;
+
                                 const checkbox = document.createElement('input');
                                 checkbox.type = 'checkbox';
-                                checkbox.addEventListener('change', () => {
+
+                                const taskText = document.createElement('span');
+                                taskText.classList.add('task-text');
+                                taskText.textContent = task.text;
+
+                                checkbox.addEventListener('change', async () => {
+                                    console.log('Delete Inititated');
+                                    taskText.style.textDecoration = "line-through";
+                                    await new Promise(resolve => setTimeout(resolve, 750)); 
                                     vscode.postMessage({ command: 'deleteTask', taskId: task.id });
                                 });
+
                                 li.appendChild(checkbox);
-                                li.appendChild(document.createTextNode(task.text));
+                                li.appendChild(taskText);
                                 taskList.appendChild(li);
                             });
                             break;

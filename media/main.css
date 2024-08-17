@@ -1,53 +1,102 @@
-body {
-    font-family: var(--vscode-font-family);
-    color: var(--vscode-foreground);
-    padding: 10px;
+:root {
+    --vscode-blue: #007ACC;
+    --button-size: 28px; /* Increased the button size */
+    --border-radius: 4px;
 }
 
 #task-form {
     display: flex;
     flex-direction: column;
+    gap: 5px;
+    padding: 5px;
 }
 
-#task-input {
-    margin-bottom: 10px;
-    padding: 5px;
-    font-size: 1em;
+.top-row, .bottom-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.bottom-row {
+    justify-content: space-between; /* Distribute space between the elements */
 }
 
 #depth-scale {
-    margin-bottom: 10px;
-    width: 100%;
+    flex-grow: 1;
+    width: 100%; 
+    height: 5.5px; 
+    outline: none;
+    border-radius: 15px;
+    margin: 0; 
+    padding: 0; 
+}
+
+#depth-scale::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: var(--vscode-blue); /* Match the slider thumb color to the buttons */
+}
+
+#depth-scale::-moz-range-thumb,
+#depth-scale::-ms-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    cursor: pointer;
+    background-color: var(--vscode-blue);
 }
 
 #depth-value {
-    margin-bottom: 10px;
-    font-size: 1em;
-    text-align: center;
+    display: none;
 }
 
-button {
+#task-input {
+    flex-grow: 1;
+    padding: 6px 10px;
+    font-size: .95em;
+    border: 1px solid var(--vscode-input-border);
+    background-color: var(--vscode-input-background);
+    color: var(--vscode-input-foreground);
+    border-radius: var(--border-radius);
+}
+
+#magic-wand-button, #submit-button, #clear-tasks-button {
+    width: var(--button-size);
+    height: var(--button-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     background-color: var(--vscode-button-background);
     color: var(--vscode-button-foreground);
     border: none;
-    padding: 10px;
-    font-size: 1em;
     cursor: pointer;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
+    font-size: 14px;
+    transition: background-color 0.2s;
 }
 
-button:hover {
+#magic-wand-button:hover, #submit-button:hover, #clear-tasks-button:hover {
     background-color: var(--vscode-button-hoverBackground);
 }
 
-#task-list {
-    list-style-type: none;
-    padding: 0;
+#clear-tasks-button {
+    margin-left: auto; /* Push the button to the right */
 }
 
-#task-list li {
-    margin-bottom: 5px;
-    padding: 5px;
+#task-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 12px;
+}
+
+.task-item {
+    margin-bottom: 6px;
+    padding: 8px;
     background-color: var(--vscode-list-hoverBackground);
-    border-radius: 3px;
+    border-radius: var(--border-radius);
+    font-size: 0.95em;
 }

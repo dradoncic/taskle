@@ -68,6 +68,7 @@
   "devDependencies": {
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
+    "@types/sortablejs": "^1.15.8",
     "@types/uuid": "^10.0.0",
     "@types/vscode": "^1.91.0",
     "@typescript-eslint/eslint-plugin": "^7.14.1",
@@ -75,13 +76,15 @@
     "@vscode/test-cli": "^0.0.9",
     "@vscode/test-electron": "^2.4.0",
     "eslint": "^8.57.0",
+    "openai": "^4.55.5",
     "ts-loader": "^9.5.1",
     "typescript": "^5.4.5",
     "webpack": "^5.92.1",
     "webpack-cli": "^5.1.4"
   },
   "dependencies": {
-    "openai": "^4.52.7",
+    "sortablejs": "^1.15.2",
+    "taskle": "file:",
     "uuid": "^10.0.0"
   }
 }
