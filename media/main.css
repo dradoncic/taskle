@@ -92,8 +92,8 @@
 
 .task-item {
     margin-bottom: 6px;
-    padding: 8px;
-    background-color: var(--vscode-list-hoverBackground);
+    padding: 5px;
+    background-color: var(--vscode-input-background);
     border-radius: var(--border-radius);
     font-size: 0.95em;
 }

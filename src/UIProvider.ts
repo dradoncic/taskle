@@ -134,9 +134,9 @@ export class UIProvider implements vscode.WebviewViewProvider {
         const styleVSCodeUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'vscode.css'));
         const styleMainUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'main.css'));
 
-    const magicButtonUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'magic.svg'));
-    const submitButtonUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'enter.svg'));
-    const clearButtonUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'trash.svg'));
+        const magicButtonUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'magic.svg'));
+        const submitButtonUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'enter.svg'));
+        const clearButtonUri = webview.asWebviewUri(vscode.Uri.joinPath(this._extensionUri, 'media', 'trash.svg'));
 
         return `
         <!DOCTYPE html>
