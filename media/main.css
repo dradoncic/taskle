@@ -93,7 +93,30 @@
 .task-item {
     margin-bottom: 6px;
     padding: 5px;
-    background-color: var(--vscode-input-background);
+    background-color: var(--vscode-editor-background);
     border-radius: var(--border-radius);
-    font-size: 0.95em;
+    font-size: .95em;
+}
+
+
+
+input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    width: 10px;
+    height: 10px;
+    border: 2px solid var(--vscode-button-background);
+    border-radius: 3px;
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    vertical-align: middle;
+    margin-right: 2px;
+    background-color: var(--vscode-input-background);
+}
+
+input[type="checkbox"]:checked {
+    background-color: var(--vscode-button-hoverBackground);
+    border-color: var(--vscode-button-hoverBackground);
 }
