@@ -76,7 +76,8 @@
     color: var(--vscode-input-foreground);
 }
 
-#magic-wand-button.active:hover {
+#magic-wand-button.active:hover, #submit-button:hover,
+#clear-tasks-button:hover {
     background-color: var(--vscode-button-hoverBackground);
 }
 
@@ -106,7 +107,6 @@ input[type="checkbox"] {
     -moz-appearance: none;
     width: 10px;
     height: 10px;
-    border: 2px solid var(--vscode-button-background);
     border-radius: 3px;
     display: inline-block;
     position: relative;
@@ -118,5 +118,4 @@ input[type="checkbox"] {
 
 input[type="checkbox"]:checked {
     background-color: var(--vscode-button-hoverBackground);
-    border-color: var(--vscode-button-hoverBackground);
 }
