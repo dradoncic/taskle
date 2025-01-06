@@ -71,13 +71,7 @@ npm run test
 ## Known Issues
 - Drag-and-drop reordering of tasks is currently under development.
 - Task breakdowns may occasionally exceed the desired depth.
-
-## Contributing
-Contributions are welcome! Fork the repository and create a pull request with your proposed changes.
-
-## License
-This project is licensed under the MIT License.
-
+- 
 ---
 
 Happy Task Management with **Taskle**!
