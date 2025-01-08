@@ -24,7 +24,7 @@ Taskle is a Visual Studio Code extension designed to help you break down tasks i
 ### Installation
 1. Clone the repository:
     ```bash
-    git clone <repository-url>
+    git clone https://github.com/dradoncic/taskle.git
     ```
 2. Open the project in Visual Studio Code.
 3. Install dependencies:
